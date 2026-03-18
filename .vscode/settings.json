@@ -1,0 +1,19 @@
+{
+  // Path to the LÖVE2D executable.
+  // macOS default — change if you installed it elsewhere.
+  // Windows example: "C:\\Program Files\\LOVE\\love.exe"
+  // Linux example: "/usr/bin/love"
+  "love2d.executablePath": "/Applications/love.app/Contents/MacOS/love",
+
+  // Lua language settings
+  "Lua.runtime.version": "Lua 5.1",
+  "Lua.workspace.library": [],
+  "Lua.diagnostics.globals": [
+    "love"
+  ],
+
+  // File associations
+  "files.associations": {
+    "*.lua": "lua"
+  }
+}

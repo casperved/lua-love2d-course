@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    // Lua language support: syntax highlighting, autocomplete, error checking
+    "sumneko.lua",
+    // LÖVE2D API autocomplete (love.graphics, love.audio, etc.)
+    "dcr31.love2d"
+  ]
+}

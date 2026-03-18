@@ -24,28 +24,49 @@ This isn't just clicking buttons in a game-maker app. You're going to write real
 Go to **https://love2d.org** and download version **11.x** (the stable version). Pick the right one for your computer:
 
 - **macOS**: download the `.zip`, open it, and drag the `love.app` file into your **Applications** folder
-- **Windows**: download the installer `.exe` and run it
+- **Windows**: download the installer `.exe` and run it — make sure to tick **"Add to PATH"** during install
 
-### Step 2: Run a Project
+### Step 2: Set Up Visual Studio Code (recommended)
 
-Each assignment has a folder with a `main.lua` file inside it. Here's how to run it:
+VS Code is a free code editor that makes working through this course much easier. It gives you syntax highlighting, autocomplete for LÖVE2D, and a one-keystroke way to run your code.
 
-**On macOS:**
-- **Easy way**: Drag the assignment folder (e.g. `assignment-01-hello-world`) onto the `love` app icon in your Applications folder
-- **Terminal way**: Open Terminal, type `cd` followed by the path to the assignment folder, then type `love .` and press Enter
-  ```
-  cd ~/Desktop/lua-love2d-course/assignment-01-hello-world
-  love .
-  ```
+1. **Download VS Code** from [https://code.visualstudio.com](https://code.visualstudio.com) and install it
+2. **Open this course folder** in VS Code: `File → Open Folder` → select the `lua-love2d-course` folder
+3. **Install recommended extensions** — VS Code will show a popup saying *"This workspace has extension recommendations"*. Click **Install All**. This installs:
+   - **Lua** — syntax highlighting and error checking for Lua code
+   - **Love2D Support** — autocomplete for all `love.*` functions
 
-**On Windows:**
-- **Easy way**: Drag the assignment folder onto `love.exe` (wherever you installed it)
-- **Command Prompt way**: Open Command Prompt, navigate to the folder, then run:
-  ```
-  "C:\Program Files\LOVE\love.exe" .
-  ```
+4. **Set your LÖVE2D path** — open `.vscode/settings.json` in this folder and update `love2d.executablePath`:
 
-> **Tip:** If you drag the wrong folder (like the whole course folder instead of one assignment), nothing will happen. Make sure you drag the folder that *directly contains* `main.lua`.
+   | Platform | Default path |
+   |----------|-------------|
+   | macOS | `/Applications/love.app/Contents/MacOS/love` (already set) |
+   | Windows | `C:\\Program Files\\LOVE\\love.exe` |
+   | Linux | `/usr/bin/love` |
+
+### Step 3: Run an Assignment
+
+**The fast way — keyboard shortcut:**
+
+1. Open `starter/main.lua` inside any assignment folder
+2. Press **`Ctrl+Shift+B`** (Windows/Linux) or **`Cmd+Shift+B`** (macOS)
+3. The LÖVE2D window opens immediately!
+
+> This shortcut runs whichever folder the file you're looking at lives in. Open `starter/main.lua` → runs the starter. Open `solution/main.lua` → runs the solution.
+
+**More run options via the Terminal menu:**
+
+Go to **Terminal → Run Task…** to see all options:
+- **`love: run current folder`** — same as the keyboard shortcut
+- **`love: run starter`** — runs the starter from any file in that assignment folder
+- **`love: run solution`** — runs the solution to check what it should look like
+
+**Without VS Code (drag-and-drop):**
+
+- **macOS**: Drag the `starter/` or `solution/` folder onto the `love.app` icon in Applications
+- **Windows**: Drag the folder onto `love.exe`
+
+> **Tip:** Always drag the folder that *directly contains* `main.lua` — either `starter/` or `solution/`, not the assignment folder itself.
 
 ---
 
@@ -64,9 +85,9 @@ assignment-XX-name/
 
 **The process:**
 1. Read the assignment's `README.md` to understand what you're building
-2. Open `starter/main.lua` in a text editor (VS Code works great — it's free!)
+2. Open `starter/main.lua` in VS Code
 3. Fill in the `TODO` sections one by one
-4. Run it with LÖVE2D to see if it works
+4. Press **`Cmd+Shift+B`** (macOS) or **`Ctrl+Shift+B`** (Windows/Linux) to run it
 5. If you're stuck, use the hints in the README before peeking at the solution
 
 > **Remember:** Figuring something out yourself — even after struggling — teaches you WAY more than just copying the answer. The hints are there to help you think, not to give it all away.
