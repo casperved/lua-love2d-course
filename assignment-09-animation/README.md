@@ -1,81 +1,94 @@
 # Assignment 09: Smooth Animation with Delta Time
 
-Your programs have been drawing things that stay still. Now let's make them **move** — smoothly, correctly, on any computer!
+Build a mini solar system where a planet orbits the sun and a moon orbits the planet — all moving smoothly on any computer!
 
 ---
 
-## What is `dt` (delta time)?
+## What you'll learn
 
-Every time `love.update` is called, LÖVE passes in `dt` — the number of **seconds** since the last frame. On a fast computer running at 60 frames per second, `dt` is about `0.0167`. On a slower computer it might be `0.033`.
-
-**Why does this matter?** Imagine you move a ball like this:
-
-```lua
--- BAD: no dt
-ball.x = ball.x + 5   -- moves 5 pixels every frame
-```
-
-On a 60 FPS machine the ball moves 300 pixels/second. On a 30 FPS machine it only moves 150 pixels/second. The game feels different on every computer!
-
-```lua
--- GOOD: use dt
-ball.x = ball.x + 300 * dt   -- always moves 300 pixels per second
-```
-
-Multiplying by `dt` makes speed **frame-rate independent**. Always use it when moving things!
+How to use **delta time** (`dt`) and **math.cos / math.sin** to make things move in smooth, perfectly circular orbits.
 
 ---
 
-## Circles with `math.cos` and `math.sin`
+## How it works
 
-`math.cos` and `math.sin` are functions that take an **angle** (in radians) and return a value between -1 and 1. They are perfect for circular motion:
+### Why does smooth animation need `dt`?
 
+Imagine a toy car that moves one centimeter every time you clap your hands. If you clap fast, the car zooms. If you clap slowly, it crawls. The car's speed depends on how fast *you* clap — not how fast the car is *supposed* to go.
+
+Games have the same problem. LÖVE calls `love.update` once per frame. A fast computer gets 60 frames every second. A slow computer might only get 30. If you move a ball by 5 pixels each frame, it goes twice as fast on the fast computer!
+
+The fix is **delta time**. Every frame, LÖVE hands you a tiny number called `dt` — the number of seconds that passed since the last frame. On a 60 FPS machine, `dt` is about `0.016`. On a 30 FPS machine, `dt` is about `0.033`.
+
+When you multiply your speed by `dt`, slower computers take bigger steps and faster computers take smaller steps. The ball always travels the same distance per second, no matter what:
+
+```lua
+-- BAD: speed depends on frame rate
+ballX = ballX + 5
+
+-- GOOD: always moves 300 pixels per second
+ballX = ballX + 300 * dt
 ```
+
+### How do you move something in a circle?
+
+You used `math.cos` and `math.sin` in assignment 07B to draw star shapes. Here you'll use them again — but this time to *move* things along a circular path.
+
+Picture the hand of a clock. It always stays the same distance from the center — it just changes *angle* over time.
+
+Two math functions do this job:
+- `math.cos(angle)` — how far to move **left or right**
+- `math.sin(angle)` — how far to move **up or down**
+
+Both return a number between -1 and 1. Multiply by a radius to control the circle's size:
+
+```lua
 x = centerX + math.cos(angle) * radius
 y = centerY + math.sin(angle) * radius
 ```
 
-As `angle` increases from 0 to `2 * math.pi` (one full revolution), the point traces a perfect circle around the center!
-
-To animate this, increase `angle` each frame using `dt`:
+To keep the object moving, increase `angle` a little every frame using `dt`:
 
 ```lua
 angle = angle + speed * dt
 ```
 
-A `speed` of `1.0` means one radian per second — roughly one full orbit every 6.3 seconds. Increase it to orbit faster.
+A `speed` of `1.0` means one radian per second. A full circle is about `6.28` radians (that's `2 * math.pi`), so the object completes one orbit every ~6 seconds. Bigger speed = faster orbit.
+
+### What are radians?
+
+Radians are just a different way to measure angles — like Celsius vs Fahrenheit, but for rotation.
+
+| Degrees | Radians |
+|---------|---------|
+| 0° (pointing right) | `0` |
+| 90° (pointing down) | `math.pi / 2` ≈ 1.57 |
+| 180° (pointing left) | `math.pi` ≈ 3.14 |
+| 360° (full circle) | `2 * math.pi` ≈ 6.28 |
+
+Lua and LÖVE always use radians, so you'll get used to them quickly!
 
 ---
 
-## Radians — a quick explainer
+## Your mission
 
-Angles in Lua are measured in **radians**, not degrees:
-- `0` = facing right
-- `math.pi / 2` ≈ 1.57 = facing down
-- `math.pi` ≈ 3.14 = facing left
-- `2 * math.pi` ≈ 6.28 = one full circle back to the start
+The starter already draws the sun and the orbit rings. Your job is to make everything *move*:
 
----
+- **TODO 1** — Increase the planet's `angle` each frame and calculate its new x/y position.
+- **TODO 2** — Do the same for the moon, but orbit around the planet instead of the sun.
+- **TODO 3** — Draw the sun, the planet, and the moon.
 
-## Your Mission
+Planet 2 and the trail are already pre-filled — read that code and you'll see the exact same pattern you need for TODO 1.
 
-Build a mini solar system!
-
-- A **sun** sits at the center of the screen.
-- A **planet** orbits the sun. Its position uses `math.cos(angle)` and `math.sin(angle)`.
-- `angle` grows every frame: `angle = angle + orbitSpeed * dt`
-- A **moon** orbits the planet (same idea, but centered on the planet's position).
-- Press `R` to reset both angles to 0.
-
-Open `starter/main.lua` and follow the TODO comments!
+When it's all working you'll see a planet circling the sun and a moon circling the planet. Press `R` to reset the angles back to zero.
 
 ---
 
 ## Hints
 
-<details><summary>Hint 1 — How do I update the planet's angle and position?</summary>
+<details><summary>Hint 1 — Updating the planet's angle and position</summary>
 
-Inside `love.update(dt)`:
+Inside `love.update(dt)`, add these two steps:
 
 ```lua
 angle   = angle + orbitSpeed * dt
@@ -83,12 +96,12 @@ planetX = sunX + math.cos(angle) * orbitRadius
 planetY = sunY + math.sin(angle) * orbitRadius
 ```
 
-`math.cos` gives the horizontal offset, `math.sin` gives the vertical offset. Multiply by `orbitRadius` to control how far away the planet is.
+`math.cos` gives the left/right offset and `math.sin` gives the up/down offset. Multiplying by `orbitRadius` stretches the circle to the right size.
 </details>
 
-<details><summary>Hint 2 — How do the moon's calculations work?</summary>
+<details><summary>Hint 2 — Making the moon follow the planet</summary>
 
-The moon orbits the **planet**, so use `planetX` and `planetY` as the center:
+The moon's math is identical to the planet's — just swap the center point. Use `planetX` / `planetY` instead of `sunX` / `sunY`:
 
 ```lua
 moonAngle = moonAngle + moonSpeed * dt
@@ -96,27 +109,27 @@ moonX     = planetX + math.cos(moonAngle) * moonOrbitRadius
 moonY     = planetY + math.sin(moonAngle) * moonOrbitRadius
 ```
 
-Make sure `planetX` and `planetY` are calculated first (earlier in `love.update`), or the moon will lag one frame behind.
+Make sure the planet's position is already calculated before you do this, or the moon will be one frame behind.
 </details>
 
-<details><summary>Hint 3 — How do I draw the planet and moon?</summary>
+<details><summary>Hint 3 — Drawing the planet and moon</summary>
 
 In `love.draw`, after the sun:
 
 ```lua
--- Planet
-love.graphics.setColor(0.2, 0.5, 1)
+-- Planet (blue)
+love.graphics.setColor(0.2, 0.5, 1.0)
 love.graphics.circle("fill", planetX, planetY, planetRadius)
 
--- Moon
-love.graphics.setColor(0.8, 0.8, 0.8)
+-- Moon (grey)
+love.graphics.setColor(0.75, 0.75, 0.75)
 love.graphics.circle("fill", moonX, moonY, moonRadius)
 ```
 
-You can also draw a faint orbit ring for the moon:
+You can also draw a faint ring to show the moon's orbit path:
 
 ```lua
-love.graphics.setColor(0.25, 0.25, 0.25)
+love.graphics.setColor(0.22, 0.22, 0.22)
 love.graphics.circle("line", planetX, planetY, moonOrbitRadius)
 ```
 </details>
@@ -125,6 +138,6 @@ love.graphics.circle("line", planetX, planetY, moonOrbitRadius)
 
 ## Stretch Goals
 
-1. **Second planet** — Add a second planet with a different orbit radius and speed. Give it its own angle variable!
-2. **Trails** — Keep a table of the last 30 positions of the planet and draw small fading circles along the trail. Remove old positions as new ones are added.
-3. **Elliptical orbit** — Make the planet's orbit an ellipse instead of a circle by using a different multiplier for X and Y: `planetX = sunX + math.cos(angle) * orbitRadius * 1.5` (wider) and `planetY = sunY + math.sin(angle) * orbitRadius * 0.8` (shorter).
+1. **Second planet** — Add a second planet with a bigger orbit radius and a slower speed. Give it its own `angle2` variable so it moves independently.
+2. **Trails** — Keep a table of the last 40 positions of the planet. Each frame, add the current position and remove the oldest one if the table gets too long. Draw each saved position as a tiny fading circle — the glow effect in the solution uses `alpha = i / #trail * 0.5`.
+3. **Speed variation** — Make orbit speed depend on distance: `angle = angle + (200 / orbitRadius) * dt`. Bodies close to the sun zip around fast; distant ones drift slowly — just like the real solar system!

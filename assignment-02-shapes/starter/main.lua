@@ -1,7 +1,8 @@
 -- Assignment 02: Shapes & Colors
--- Let's paint a scene using shapes!
--- The screen is 800 pixels wide and 600 pixels tall.
--- Remember: (0,0) is the TOP-LEFT corner. x goes right, y goes down.
+-- Paint a sunny-day scene using rectangles, circles, and lines.
+-- The window is 800 pixels wide and 600 pixels tall.
+-- (0, 0) is the TOP-LEFT corner. x grows right, y grows down.
+-- IMPORTANT: draw backgrounds first — later shapes appear ON TOP of earlier ones!
 
 function love.load()
 end
@@ -14,54 +15,57 @@ function love.draw()
     -- =====================
     -- SKY (already done!)
     -- =====================
-    love.graphics.setColor(0.4, 0.7, 1)         -- light blue
+    love.graphics.setColor(0.4, 0.7, 1)
     love.graphics.rectangle("fill", 0, 0, 800, 600)
 
     -- =====================
     -- GROUND
     -- =====================
-    -- TODO 1: Set the color to green (0.2, 0.7, 0.2) and draw a rectangle
-    -- for the ground. It should be 800 wide and 200 tall, starting at y=400.
-    -- (This covers the bottom portion of the screen.)
-    -- love.graphics.setColor(?, ?, ?)
-    -- love.graphics.rectangle("fill", 0, 400, ?, ?)
+    -- TODO 1: Draw the ground.
+    -- Use love.graphics.setColor then love.graphics.rectangle("fill", x, y, w, h).
+    -- The ground should cover the bottom part of the 800x600 screen.
 
     -- =====================
     -- SUN
     -- =====================
-    -- TODO 2: Set the color to yellow (1, 1, 0) and draw a filled circle
-    -- near the top-right of the screen. Try center (680, 80), radius 50.
-    -- love.graphics.setColor(?, ?, ?)
-    -- love.graphics.circle("fill", ?, ?, ?)
+    -- TODO 2: Draw the sun.
+    -- Use love.graphics.setColor then love.graphics.circle("fill", x, y, radius).
+    -- Place it near the top-right of the sky.
 
     -- =====================
     -- HOUSE BODY
     -- =====================
-    -- TODO 3: Set the color to warm brown (0.6, 0.4, 0.2) and draw a
-    -- rectangle at (250, 280) that is 200 wide and 120 tall.
-    -- love.graphics.setColor(?, ?, ?)
-    -- love.graphics.rectangle("fill", ?, ?, ?, ?)
+    -- TODO 3: Draw the house body.
+    -- A warm-colored filled rectangle sitting on the ground, roughly centered.
 
     -- =====================
     -- ROOF
     -- =====================
-    -- TODO 4: Set color to red (0.8, 0.1, 0.1).
-    -- Draw two lines to make a triangle roof over the house:
-    --   Left slope:  from (240, 280) to (350, 180)
-    --   Right slope: from (350, 180) to (460, 280)
-    -- love.graphics.setColor(?, ?, ?)
-    -- love.graphics.line(?, ?, ?, ?)
-    -- love.graphics.line(?, ?, ?, ?)
+    -- TODO 4: Draw the roof as two lines meeting at a peak above the house.
+    -- Use love.graphics.line(x1, y1, x2, y2) — one line for each slope.
+
+    -- =====================
+    -- DOOR
+    -- =====================
+    -- TODO 5: Draw the door.
+    -- A small, tall, dark-colored rectangle at the base of the house.
+
+    -- =====================
+    -- WINDOWS
+    -- =====================
+    -- TODO 6: Draw two windows on the house.
+    -- Two small light-blue rectangles, one on each side of the door.
 
     -- =====================
     -- CLOUD
     -- =====================
-    -- TODO 5: Set color to white (1, 1, 1) and draw 3 circles close together
-    -- to make a fluffy cloud shape!
-    -- Try centers around (150, 120), (190, 105), (230, 120) with radius 35.
-    -- love.graphics.setColor(?, ?, ?)
-    -- love.graphics.circle("fill", ?, ?, ?)
-    -- love.graphics.circle("fill", ?, ?, ?)
-    -- love.graphics.circle("fill", ?, ?, ?)
+    -- TODO 7: Draw a fluffy cloud using three overlapping white circles.
+    -- Place them close together so they merge into one cloud shape.
+
+    -- =====================
+    -- SECOND CLOUD
+    -- =====================
+    -- TODO 8: Draw a second cloud somewhere else in the sky.
+    -- Make it a bit smaller than the first to give a sense of distance.
 
 end

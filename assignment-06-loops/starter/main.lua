@@ -1,5 +1,5 @@
 -- Assignment 06: Patterns with Loops
--- Instead of drawing 100 circles by hand, use a loop!
+-- Instead of drawing 48 circles by hand, let loops do the work!
 
 COLS    = 8    -- number of columns
 ROWS    = 6    -- number of rows
@@ -13,34 +13,28 @@ function love.update(dt)
 end
 
 function love.draw()
-    -- Dark background
     love.graphics.setColor(0.05, 0.05, 0.1)
     love.graphics.rectangle("fill", 0, 0, 800, 600)
 
-    -- TODO 1: Write a for loop for rows:
-    --   for row = 1, ROWS do
-    --
-    --   Inside that loop, write another for loop for columns:
-    --     for col = 1, COLS do
+    -- TODO 1: Write the outer for loop (rows).
+    -- It should count from 1 to ROWS.
 
-    -- TODO 2: Inside BOTH loops, calculate the x and y position:
-    --   local x = col * SPACING - SPACING / 2 + 45
-    --   local y = row * SPACING - SPACING / 2 + 30
+        -- TODO 2: Write the inner for loop (columns) inside the outer one.
+        -- It should count from 1 to COLS.
 
-    -- TODO 3: Make the color depend on the row and col.
-    --   local r = col / COLS
-    --   local g = row / ROWS
-    --   local b = 0.5
-    --   love.graphics.setColor(r, g, b)
+            -- TODO 3: Calculate x and y position for this circle.
+            -- x = col * SPACING + some offset to center the grid
+            -- y = row * SPACING + some offset to center the grid
+            -- Use local variables.
 
-    -- TODO 4: Draw a filled circle at (x, y) with RADIUS:
-    --   love.graphics.circle("fill", x, y, RADIUS)
+            -- TODO 4: Calculate a color based on position.
+            -- r = col / COLS  (goes from near-0 to 1 across the columns)
+            -- g = row / ROWS  (goes from near-0 to 1 down the rows)
 
-    -- Don't forget to close both loops!
-    --   end   (closes the inner "col" loop)
-    -- end     (closes the outer "row" loop)
+            -- TODO 5: Set the color and draw a filled circle.
+            -- Use love.graphics.setColor and love.graphics.circle.
 
     -- Helper text so the window isn't blank while you work
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.print("Complete the TODOs to fill this screen with colorful circles!", 10, 570)
+    love.graphics.setColor(1, 1, 1, 0.8)
+    love.graphics.print("Fill in the TODOs to draw a grid of colorful circles!", 10, 575)
 end

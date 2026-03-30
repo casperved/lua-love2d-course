@@ -1,84 +1,74 @@
-# Assignment 14: Timers & Spawning ⏱️☄️
+# Assignment 14: Timers & Spawning
 
-Games need things to happen on a schedule — enemies that appear every few seconds, power-ups that spawn randomly, waves that get harder over time. The trick is a simple pattern called the **accumulator timer**. Let's learn it!
+## What you'll learn
+
+How to make things happen on a schedule — like an enemy appearing every two seconds — using a simple counting trick called the **accumulator timer**.
 
 ---
 
-## The Accumulator Timer Pattern
+## How it works
 
-LÖVE gives us `dt` (delta time) — the number of seconds that passed since the last frame. It's a tiny number, usually around `0.016` (about 16 milliseconds at 60 fps).
+### The kitchen timer trick
 
-We add `dt` to a counter every frame. When that counter reaches our threshold, we do something and reset it:
+Imagine a kitchen timer. You set it for two minutes. Every second that passes, you check: "Has it been two minutes yet?" If yes, the oven beeps and you reset the timer for next time.
+
+That is exactly how we do it in code. We have a variable called `spawnTimer` that starts at zero. Every frame, we add a tiny bit of time to it (`dt` — remember, that's the time since the last frame). When it reaches our target (say, 1.5 seconds), we spawn an asteroid and reset `spawnTimer` back to zero.
 
 ```lua
-spawnTimer    = 0      -- counts up
-spawnInterval = 2.0    -- spawn something every 2 seconds
+spawnTimer = spawnTimer + dt       -- add a tiny bit each frame
 
-function love.update(dt)
-    spawnTimer = spawnTimer + dt
-
-    if spawnTimer >= spawnInterval then
-        spawnSomething()    -- do the thing!
-        spawnTimer = 0      -- reset the clock
-    end
+if spawnTimer >= spawnInterval then
+    spawnAsteroid()                -- time's up! do the thing
+    spawnTimer = 0                 -- reset for next time
 end
 ```
 
-That's it! No external libraries, no complicated code — just a number that counts up and resets.
+That's the whole pattern. No special libraries. Just a number counting up.
 
----
+### Making the game harder over time
 
-## Increasing Difficulty Over Time
+A good game gets harder as you play. We can shrink the gap between spawns as the player survives longer. The longer you last, the shorter `spawnInterval` gets, so asteroids come faster and faster.
 
-A great game gets harder as you play. One easy way: make `spawnInterval` shrink as time passes.
+We use `math.max` to make sure it never shrinks below 0.3 seconds — otherwise the game would become impossible!
 
 ```lua
--- Recalculate interval each frame — gets smaller as survivalTimer grows
 spawnInterval = math.max(0.3, 1.5 - survivalTimer * 0.05)
 ```
 
-- `math.max(0.3, ...)` makes sure it never goes below 0.3 seconds (don't want an impossible game!).
-- The longer `survivalTimer` is, the smaller `spawnInterval` becomes.
+Think of it like a factory machine speeding up — slowly at first, then relentlessly.
 
----
+### Hitting a circle with a rectangle
 
-## Circle vs. Rectangle Collision
+The player is a rectangle. The asteroids are circles. Checking if they overlap exactly is tricky — but there is a good-enough shortcut.
 
-This game has circular asteroids and a rectangular player. A simple (slightly generous) check:
+Imagine drawing a bigger rectangle around the player — one that is padded outward by the asteroid's radius on every side. If the asteroid's centre point lands inside that bigger rectangle, we call it a hit. It is slightly generous, but it feels fair to the player.
 
 ```lua
--- Treat the circle as if it's a square of size (radius * 2) overlapping the player rect
-if circleX > playerX - radius and circleX < playerX + playerW + radius and
-   circleY > playerY - radius and circleY < playerY + playerH + radius then
-    -- collision!
+if a.x > player.x - a.radius and a.x < player.x + player.w + a.radius and
+   a.y > player.y - a.radius and a.y < player.y + player.h + a.radius then
+    gameOver = true
 end
 ```
 
-It's not pixel-perfect, but it's fast and feels fair to the player.
-
 ---
 
-## Your Mission
+## Your mission
 
-- Asteroids fall from the top of the screen at random horizontal positions.
-- The player moves **left and right** with arrow keys to dodge them.
-- Score = how many seconds you've survived.
-- Every frame the spawn interval shrinks — it keeps getting faster!
-- When an asteroid hits the player, it's **Game Over**.
+You are flying a little spaceship. Asteroids fall from the top of the screen. Dodge them with the left and right arrow keys. Your score is how many seconds you survive. The longer you last, the faster they fall.
 
----
+Fill in the three TODOs in the starter file:
 
-## TODOs in the Starter File
-
-1. **TODO 1** — Implement the spawn timer: add `dt`, check against `spawnInterval`, call `spawnAsteroid()`, reset.
-2. **TODO 2** — Reduce `spawnInterval` over time using `math.max`.
-3. **TODO 3** — Implement the circle-rectangle collision check for each asteroid.
+1. **TODO 1** — Make the spawn timer count up and trigger `spawnAsteroid()` when it is time.
+2. **TODO 2** — Shrink `spawnInterval` over time so the game gets harder.
+3. **TODO 3** — Detect when an asteroid hits the player and set `gameOver = true`.
 
 ---
 
 ## Hints
 
-<details><summary>Hint 1 — The spawn timer</summary>
+<details><summary>Hint 1 — Making the spawn timer work</summary>
+
+Every frame, add `dt` to `spawnTimer`. When it is big enough, spawn an asteroid and reset the timer:
 
 ```lua
 spawnTimer = spawnTimer + dt
@@ -88,21 +78,23 @@ if spawnTimer >= spawnInterval then
 end
 ```
 
-Put this block inside `love.update`, after the player movement code.
+Put this inside `love.update`, after the player movement code.
 </details>
 
-<details><summary>Hint 2 — Ramping up difficulty</summary>
+<details><summary>Hint 2 — Speeding up over time</summary>
+
+After updating `spawnTimer`, recalculate the interval. The longer `survivalTimer` is, the smaller the result — but `math.max` stops it going too low:
 
 ```lua
 spawnInterval = math.max(0.3, 1.5 - survivalTimer * 0.05)
 ```
 
-Add this line right after you update `spawnTimer`. It recalculates the interval every frame based on how long the player has survived.
+This one line is all you need. It runs every frame, so it stays up to date automatically.
 </details>
 
-<details><summary>Hint 3 — Asteroid collision check</summary>
+<details><summary>Hint 3 — Asteroid collision</summary>
 
-Inside the asteroid loop, in the `else` branch (when the asteroid hasn't fallen off screen):
+Inside the asteroid loop, in the `else` branch (the asteroid is still on screen), check whether the asteroid centre is inside the padded player rectangle:
 
 ```lua
 if a.x > player.x - a.radius and a.x < player.x + player.w + a.radius and
@@ -116,6 +108,6 @@ end
 
 ## Stretch Goals
 
-1. **Asteroid splitting** — When an asteroid goes off-screen without hitting you, occasionally spawn two smaller ones the next time.
-2. **Shields** — Press Space to activate a brief shield (invincibility for 1 second). Only usable once every 10 seconds. Show a cooldown bar!
-3. **Score multiplier** — If you dodge 5 asteroids in a row without getting close to any, activate a ×2 score multiplier for 5 seconds.
+1. **Colour by speed** — Make fast asteroids red and slow ones grey. Use the asteroid's `speed` value to blend the colour.
+2. **Shield powerup** — Press Space to turn on a shield for one second. It can only be used once every ten seconds. Show a small cooldown bar on screen.
+3. **High score** — Track the best survival time across restarts. Display it on the game-over screen as "Best: X seconds".

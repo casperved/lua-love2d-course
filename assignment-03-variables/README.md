@@ -1,134 +1,127 @@
-# Assignment 03: Variables & Math
+# Assignment 03A: Variables
 
-So far you've typed numbers directly into your drawing calls. But what happens if you want to move your ball to a different spot? You'd have to change the number in five different places! There's a much smarter way: **variables**.
+## What you'll learn
+
+How to store values in **variables** so you can change one number and have your whole program update automatically.
 
 ---
 
-## What Is a Variable?
+## How it works
 
-Think of a variable as a **labeled box** that holds a value. You give the box a name, put something inside it, and then use that name whenever you need the value.
+### Variables are labeled boxes
+
+Imagine you have a cardboard box. You write "ballX" on the side, and put the number `400` inside.
 
 ```lua
-ballX = 400     -- A box labeled "ballX" holding the number 400
-ballY = 300     -- A box labeled "ballY" holding the number 300
+ballX = 400
 ```
 
-Now instead of writing `400` and `300` everywhere, you write `ballX` and `ballY`. When you want to move the ball, you just change the number in one box — and everything that uses that variable updates automatically!
+Now whenever your program needs to know where the ball is, it looks inside the box called `ballX` and finds `400`.
 
-Variable names in Lua:
-- Can contain letters, numbers, and underscores `_`
-- Cannot start with a number
-- Are case-sensitive (`ballX` and `ballx` are different!)
-- Should be descriptive — `ballRadius` is clearer than `r`
+The magic part: if you change what's in the box, **everything that uses the box updates too**. You don't have to hunt through your code changing `400` in five different places. You just change it once, at the top.
 
----
+```lua
+ballX = 200   -- move the box to the left — the ball moves too!
+```
 
-## Basic Math
+### Math with variables
 
 You can do math with variables just like a calculator:
 
 ```lua
-x = 100 + 50      -- x is now 150
-y = 300 - 75      -- y is now 225
-size = 20 * 3     -- size is now 60
-half = 100 / 2    -- half is now 50
+ballX = 400 + 100    -- ballX is now 500
+ballX = ballX + 10   -- add 10 to whatever is already in the box
 ```
 
-You can also mix variables and numbers together:
-```lua
-ballX = ballX + 10    -- move the ball 10 pixels to the right
-```
+### Where to put your variables
+
+Put them at the very top of the file, before any functions. That way every function in your program can see and use them.
 
 ---
 
-## Tables: Storing Multiple Values Together
+### Colors are just three variables
 
-Sometimes you want to group related values. In Lua, a **table** lets you do this:
+A color is made of three amounts: red, green, and blue — each between `0` and `1`. Instead of typing the numbers directly into the drawing call, store them in variables:
 
 ```lua
-ballColor = {1, 0.5, 0}    -- an orange color, stored as one unit
+ballR = 1     -- full red
+ballG = 0.5   -- half green
+ballB = 0     -- no blue  →  orange!
 ```
 
-To access the values inside, use square brackets and a number:
+Then use those variables when you draw:
+
 ```lua
-ballColor[1]    -- gets the first value:  1   (red)
-ballColor[2]    -- gets the second value: 0.5 (green)
-ballColor[3]    -- gets the third value:  0   (blue)
+love.graphics.setColor(ballR, ballG, ballB)
 ```
+
+Change one variable and the color of everything drawn with it changes too.
+
+> **Coming up next:** In assignment 03B you'll learn a neater way to group related values like colors together into a single thing called a **table**.
 
 ---
 
-## Where Should Variables Live?
+## Your mission
 
-Global variables (like `ballX = 400`) can go at the top of the file, outside any function. That way every function can see and use them.
+Open `starter/main.lua`. Six variables are declared at the top but all start at `0`.
 
-`love.load()` is also a great place to set starting values — it runs once at the beginning, so it's perfect for setup.
+There are **3 TODOs**:
 
----
+1. **TODO 1** — Give `ballX`, `ballY`, `ballRadius`, `ballR`, `ballG`, and `ballB` sensible starting values so the ball appears on screen in a color of your choice.
+2. **TODO 2** — Draw the ball using those variables.
+3. **TODO 3** — Print the ball's position as text in the top-left corner.
 
-## Your Mission
-
-Open `starter/main.lua` and fill in the TODOs to:
-
-1. Define variables for the ball's **position** (`ballX`, `ballY`), **size** (`ballRadius`), and **color** (`ballColor`)
-2. Draw the ball using those variables
-3. Display a text label showing the ball's x and y position on screen
-
-Then try **changing the variable values** and re-running — watch how the ball jumps to a different position without you having to change anything in the drawing code!
+When you're done, try tweaking the values at the top and re-running. Watch the ball jump without touching the drawing code!
 
 ---
 
 ## Hints
 
-<details>
-<summary>Hint 1 — Creating variables</summary>
+<details><summary>Hint 1 — Setting variable values</summary>
 
-Variables in Lua are created just by assigning a value to a name. Put these near the top of your file, before any functions:
+Right now all variables are `0`, which hides the ball in the corner and makes it invisible. Try these as a starting point:
 
 ```lua
-ballX = 400
-ballY = 300
+ballX      = 400   -- center of the 800-wide screen
+ballY      = 300   -- center of the 600-tall screen
 ballRadius = 40
+
+ballR = 1      -- red amount
+ballG = 0.5    -- green amount
+ballB = 0      -- blue amount  →  orange
 ```
 
-For the color table, use curly braces:
-```lua
-ballColor = {1, 0.5, 0}    -- orange!
-```
+Feel free to pick any color you like!
 </details>
 
-<details>
-<summary>Hint 2 — Drawing with variables</summary>
+<details><summary>Hint 2 — Drawing the ball with variables</summary>
 
-Once you have variables, use them in your drawing calls exactly like you'd use numbers:
+Once your variables have values, plug them straight into the drawing calls:
 
 ```lua
-love.graphics.setColor(ballColor[1], ballColor[2], ballColor[3])
+love.graphics.setColor(ballR, ballG, ballB)
 love.graphics.circle("fill", ballX, ballY, ballRadius)
 ```
-
-Notice how we access each part of the color table with `[1]`, `[2]`, `[3]`.
 </details>
 
-<details>
-<summary>Hint 3 — Displaying the position as text</summary>
+<details><summary>Hint 3 — Printing the position as text</summary>
 
-To show the ball's coordinates as text, use `..` to join (concatenate) strings and numbers together:
+The `..` operator glues pieces of text together. If `ballX` is `400`, then `"x = " .. ballX` becomes `"x = 400"`.
 
 ```lua
 love.graphics.setColor(1, 1, 1)
-love.graphics.print("x = " .. ballX .. "  y = " .. ballY, 10, 10)
+love.graphics.print("Ball position:  x = " .. ballX .. "  y = " .. ballY, 10, 10)
 ```
 
-The `..` operator glues pieces of text together into one string. So if `ballX` is 400, this prints `"x = 400  y = 300"`.
+Put this at the end of `love.draw()` so the text appears on top of everything else.
 </details>
 
 ---
 
 ## Stretch Goals
 
-1. **Calculated positions!** Instead of setting `ballX` and `ballY` directly, calculate them: set `ballX = 800 / 2` (center of screen) and `ballY = 600 / 2`. Run it — does the ball appear in the center? Now try `love.graphics.getWidth() / 2` instead of `800 / 2`.
+1. **Center the ball using math.** Instead of typing `400` and `300`, write `ballX = 800 / 2` and `ballY = 600 / 2`. The ball lands in the exact center. Now try `love.graphics.getWidth() / 2` — same result, but LÖVE figures out the screen size for you!
 
-2. **Second ball!** Create a second set of variables (`ball2X`, `ball2Y`, `ball2Radius`, `ball2Color`) and draw a second ball in a different spot with a different color.
+2. **Add a second ball.** Create a new set of variables (`ball2X`, `ball2Y`, `ball2Radius`, `ball2R`, `ball2G`, `ball2B`) and draw a second circle somewhere else on screen in a different color.
 
-3. **Math art!** Set `ballX = ballRadius * 3`. Change `ballRadius` to different values and see how both the size and position change at once. That's the power of using variables!
+3. **Link variables together.** Set `ballX = ballRadius * 5`. Now change `ballRadius` to a bigger or smaller number and re-run. Notice how the ball moves *and* resizes at the same time — that's the power of variables pointing to other variables!

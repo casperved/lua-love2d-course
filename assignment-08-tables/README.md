@@ -1,132 +1,188 @@
-# Assignment 08: Tables
+# Assignment 08: Tables — A Garden Full of Flowers
 
-So far all your variables have held a single value — a number, or maybe a string. What if you want to keep track of **many things at once**, like a whole garden full of flowers? That's what **tables** are for!
+## What you'll learn
+
+How to store and use **many things at once** using a table — Lua's all-purpose list.
 
 ---
 
-## Tables are lists
+## How it works
 
-In Lua, a table is a container that can hold many values:
+### Variables can only hold one thing
+
+So far your variables have looked like this:
 
 ```lua
-myList = {}                  -- create an empty table
-table.insert(myList, "apple")
-table.insert(myList, "banana")
-table.insert(myList, "cherry")
-
-print(#myList)       -- 3  (the # operator gives the length)
-print(myList[1])     -- apple   (items are numbered starting at 1)
-print(myList[2])     -- banana
+ballX = 100
+ballY = 200
 ```
 
----
+Each variable holds **one number**. That's fine for one ball. But what if you want a garden with 50 flowers? You don't want 50 variables!
 
-## Tables can hold tables!
+### A table is like a shopping bag
 
-Each item in a table can itself be a table — this is how we store objects with multiple properties:
+Imagine a shopping bag. You can put **as many items as you like** inside it. In Lua that bag is called a **table**:
+
+```lua
+bag = {}                      -- empty bag
+table.insert(bag, "apple")    -- toss an apple in
+table.insert(bag, "banana")   -- toss a banana in
+table.insert(bag, "cherry")   -- toss a cherry in
+
+print(#bag)     -- 3   (#bag means "how many things are in bag?")
+print(bag[1])   -- apple   (item 1, 2, 3 ... Lua starts counting at 1)
+```
+
+### Two ways to access a table field
+
+You can use a **number index** (`t[1]`, `t[2]`, …) or a **named field** (`t.x`, `t.name`, …). Both are valid — they just use different kinds of keys.
+
+```lua
+-- Numbered index — like items in a list
+local color = {1.0, 0.5, 0.2}
+print(color[1])   -- 1.0   (the red channel)
+
+-- Named field — like a labelled box
+local flower = {x = 300, y = 450, r = 1.0}
+print(flower.x)   -- 300
+print(flower.r)   -- 1.0
+```
+
+Inside this assignment you'll use named fields because they make your code easier to read: `f.x` is clearer than `f[1]`.
+
+### Each item can have its own properties
+
+Instead of just storing a word, you can store a **mini-table** (think of it as a labelled box) inside the bag:
 
 ```lua
 local flower = {
-    x = 250,
-    y = 400,
-    r = 1.0,
-    g = 0.3,
-    b = 0.8
+    x = 300,      -- where on screen
+    y = 450,
+    r = 1.0,      -- red amount  (0 to 1)
+    g = 0.2,      -- green amount
+    b = 0.8,      -- blue amount
 }
 
-print(flower.x)   -- 250
-print(flower.g)   -- 0.3
+print(flower.x)   -- 300
+print(flower.r)   -- 1.0
 ```
 
----
+### Visiting every item with a loop
 
-## Looping through a table
-
-Use a `for` loop with `#` to visit every item:
+To do something with every item in a table, use a `for` loop and the `#` operator:
 
 ```lua
-for i = 1, #myList do
-    print(myList[i])
+for i = 1, #flowers do
+    local f = flowers[i]   -- grab flower number i
+    -- now use f.x, f.y, f.r, etc.
 end
 ```
 
----
-
-## Adding items when something happens
-
-You can add to a table at any time, not just when the program starts. For example, when the player clicks the mouse:
+### Adding a new item when the player clicks
 
 ```lua
 function love.mousepressed(x, y, button)
-    if button == 1 then   -- left mouse button
-        table.insert(myList, {x = x, y = y})
+    if button == 1 then   -- left click
+        local newFlower = { x = x, y = y }
+        table.insert(flowers, newFlower)
     end
 end
 ```
 
+Every click creates a new mini-table and drops it into the bag. The loop in `love.draw` picks it up automatically next frame — you don't have to change anything else!
+
 ---
 
-## Your Mission
+## Your mission
 
-Build an interactive flower-planting app!
+Plant a garden! When you run the finished program:
 
-- Every time you **left-click** on the screen, a new flower appears at that spot.
-- Each flower has a **random color** (use `math.random()` which returns a value between 0 and 1).
-- All flowers are stored in a table and drawn every frame.
-- The screen shows how many flowers you have planted.
+- The screen shows a blue sky and a green grassy field.
+- Every **left-click** plants a flower at that spot.
+- Each flower has a **random color**, a stem, petals, and a bright center dot.
+- Flowers **grow from tiny to full size** — they start at size 0 and bloom over time.
+- A counter in the top-left shows how many flowers you've planted.
 
-Open `starter/main.lua` and follow the TODO comments!
+Open `starter/main.lua` and fill in the TODOs:
+
+**TODO 1** — Write `spawnFlower(x, y)`. Create a table with all the fields a flower needs and insert it into `flowers`.
+
+**TODO 2** — In `love.update`, grow each flower a little bit every frame until it reaches its `maxSize`.
+
+**TODO 3** — In `love.draw`, loop through every flower and draw it (stem, petals, bloom, center dot).
 
 ---
 
 ## Hints
 
-<details><summary>Hint 1 — Where do I create the flowers table?</summary>
+<details><summary>Hint 1 — What fields should a new flower have?</summary>
 
-At the very top of your file (outside any function), add:
+Give the flower table all the properties it needs:
 
 ```lua
-flowers = {}
+function spawnFlower(x, y)
+    local newFlower = {
+        x       = x,
+        y       = y,
+        r       = math.random(),          -- random number between 0.0 and 1.0
+        g       = math.random(),
+        b       = math.random(),
+        size    = 0,                      -- starts tiny
+        maxSize = math.random(12, 22),    -- grows to a random final size
+    }
+    table.insert(flowers, newFlower)
+end
 ```
 
-This creates an empty table that every function in your file can see and use.
+`math.random()` with no arguments gives a random decimal between 0 and 1 — perfect for a color channel.
 </details>
 
-<details><summary>Hint 2 — How do I draw each flower?</summary>
+<details><summary>Hint 2 — How do I make a flower grow in love.update?</summary>
 
-Loop through the table and use each flower's fields:
+Loop through every flower and nudge its `size` upward each frame. Use `math.min` so it never goes past `maxSize`:
+
+```lua
+for i = 1, #flowers do
+    local f = flowers[i]
+    if f.size < f.maxSize then
+        f.size = math.min(f.size + dt * 40, f.maxSize)
+    end
+end
+```
+
+`dt` is the time since the last frame (a tiny number like 0.016). Multiplying by 40 makes the flower bloom in about half a second.
+</details>
+
+<details><summary>Hint 3 — How do I draw the stem, petals, bloom, and center dot?</summary>
+
+Inside your drawing loop, use each flower's fields:
 
 ```lua
 for i = 1, #flowers do
     local f = flowers[i]
 
-    -- Green stem going downward from the bloom
-    love.graphics.setColor(0.1, 0.6, 0.1)
+    -- Stem: a thick line going downward from the bloom
+    love.graphics.setColor(0.1, 0.55, 0.1)
     love.graphics.setLineWidth(3)
-    love.graphics.line(f.x, f.y, f.x, f.y + 40)
+    love.graphics.line(f.x, f.y, f.x, f.y + 45)
     love.graphics.setLineWidth(1)
 
-    -- Colourful bloom
-    love.graphics.setColor(f.r, f.g, f.b)
-    love.graphics.circle("fill", f.x, f.y, 15)
-end
-```
-</details>
-
-<details><summary>Hint 3 — How do I add a flower on mouse click?</summary>
-
-```lua
-function love.mousepressed(x, y, button)
-    if button == 1 then
-        local newFlower = {
-            x = x,
-            y = y,
-            r = math.random(),   -- random number 0.0 – 1.0
-            g = math.random(),
-            b = math.random()
-        }
-        table.insert(flowers, newFlower)
+    -- Petals: 5 small circles arranged in a ring around the center
+    love.graphics.setColor(f.r * 0.8, f.g * 0.8, f.b * 0.8)
+    for p = 0, 4 do
+        local angle  = (p / 5) * math.pi * 2
+        local petalX = f.x + math.cos(angle) * f.size * 0.8
+        local petalY = f.y + math.sin(angle) * f.size * 0.8
+        love.graphics.circle("fill", petalX, petalY, f.size * 0.6)
     end
+
+    -- Central bloom circle
+    love.graphics.setColor(f.r, f.g, f.b)
+    love.graphics.circle("fill", f.x, f.y, f.size)
+
+    -- Bright yellow center dot
+    love.graphics.setColor(1, 1, 0.6)
+    love.graphics.circle("fill", f.x, f.y, f.size * 0.3)
 end
 ```
 </details>
@@ -135,6 +191,6 @@ end
 
 ## Stretch Goals
 
-1. **Right-click to remove** — In `love.mousepressed`, if `button == 2` (right click), loop backwards through flowers and remove the one closest to the click (use the distance formula from assignment 10!).
-2. **Growing flowers** — Give each flower a `size` that starts at 0 and grows to 15 in `love.update`. Use `f.size = math.min(f.size + dt * 30, 15)`.
-3. **Petals** — Instead of a plain circle, draw 5 small circles arranged around the center of the bloom to make it look like a real flower with petals.
+1. **Right-click to remove** — In `love.mousepressed`, if `button == 2` (right-click), remove the last flower with `table.remove(flowers)`. Watch the counter go down!
+2. **Flower limit** — Cap the garden at 20 flowers. Before inserting a new one, check `if #flowers >= 20 then table.remove(flowers, 1) end`. The oldest flower quietly makes room for the newest.
+3. **Leaves** — Draw two small ovals branching off the stem to give each flower a leaf on each side.

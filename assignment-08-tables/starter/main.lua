@@ -1,60 +1,57 @@
--- Assignment 08: Tables
--- Tables are like lists. We'll store all our flowers in a table!
+-- Assignment 08: Tables — STARTER
+-- Every left-click plants a flower. All flowers live in a table.
 
--- TODO 1: Create an empty table called flowers (outside any function so all
--- functions can see it):
---   flowers = {}
-flowers = {}   -- placeholder so the rest of the file doesn't crash
+flowers = {}   -- an empty bag; we'll fill it with flower mini-tables
 
 function love.load()
     math.randomseed(os.time())
 end
 
+-- ============================================================
+-- TODO 1: Write spawnFlower(x, y).
+-- Create a table with fields x, y, r, g, b, size, maxSize.
+-- Insert it into flowers.
+function spawnFlower(x, y)
+    -- your code here
+end
+-- ============================================================
+
+function love.mousepressed(x, y, button)
+    if button == 1 then
+        spawnFlower(x, y)
+    end
+end
+
 function love.update(dt)
+    -- TODO 2: Grow each flower's bloom from size 0 up to its maxSize.
+    -- Loop through every flower (for i = 1, #flowers do).
+    -- Get the flower with: local f = flowers[i]
+    -- If f.size < f.maxSize, increase f.size a little.
+    -- Use math.min so it never exceeds f.maxSize.
 end
 
 function love.draw()
     -- Sky
-    love.graphics.setColor(0.4, 0.7, 1)
+    love.graphics.setColor(0.4, 0.7, 1.0)
     love.graphics.rectangle("fill", 0, 0, 800, 200)
 
     -- Grassy field
     love.graphics.setColor(0.2, 0.5, 0.2)
     love.graphics.rectangle("fill", 0, 200, 800, 400)
 
-    -- TODO 2: Loop through the flowers table and draw each flower.
-    -- Each flower has fields: f.x, f.y, f.r, f.g, f.b
+    -- TODO 3: Loop through every flower in the table and draw it.
+    -- For each flower f draw:
+    --   a) A stem   — a thick green line going downward from (f.x, f.y).
+    --   b) Petals   — 5 small circles arranged in a ring; use a loop with angles.
+    --   c) Bloom    — a filled circle at (f.x, f.y) with radius f.size.
+    --   d) Center   — a small bright yellow circle at (f.x, f.y).
     --
-    -- for i = 1, #flowers do
-    --     local f = flowers[i]
-    --
-    --     -- Green stem (a line going downward from the bloom)
-    --     love.graphics.setColor(0.1, 0.6, 0.1)
-    --     love.graphics.line(f.x, f.y, f.x, f.y + 40)
-    --
-    --     -- Colourful bloom
-    --     love.graphics.setColor(f.r, f.g, f.b)
-    --     love.graphics.circle("fill", f.x, f.y, 15)
-    -- end
+    -- PLACEHOLDER so the window isn't completely blank while you work:
+    love.graphics.setColor(1, 1, 0.6, 0.3)
+    love.graphics.circle("fill", 0, 0, 5)   -- PLACEHOLDER — replace this
 
-    -- Instructions
+    -- UI overlay
     love.graphics.setColor(1, 1, 1)
     love.graphics.print("Click anywhere to plant a flower!", 10, 10)
     love.graphics.print("Flowers planted: " .. #flowers, 10, 30)
-end
-
-function love.mousepressed(x, y, button)
-    if button == 1 then
-        -- TODO 3: Create a new flower table with x, y, and random r, g, b values.
-        -- Then insert it into the flowers table.
-        --
-        -- local newFlower = {
-        --     x = x,
-        --     y = y,
-        --     r = math.random(),
-        --     g = math.random(),
-        --     b = math.random()
-        -- }
-        -- table.insert(flowers, newFlower)
-    end
 end

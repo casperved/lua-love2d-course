@@ -1,53 +1,57 @@
 -- Assignment 07: Functions
--- A function is like a recipe. Write it once, use it anywhere!
+-- Write a function once, call it many times with different arguments!
 
--- TODO 1: Write a function called drawStar(x, y, outerR, innerR, r, g, b)
---
--- It should build 10 vertex points alternating between outerR and innerR,
--- set the color, then draw a filled polygon.
---
--- Here is the full vertex formula — copy it inside your function:
---
---   local verts = {}
---   for i = 0, 9 do
---       local angle  = math.pi * i / 5 - math.pi / 2
---       local radius = (i % 2 == 0) and outerR or innerR
---       table.insert(verts, x + math.cos(angle) * radius)
---       table.insert(verts, y + math.sin(angle) * radius)
---   end
---   love.graphics.setColor(r, g, b)
---   love.graphics.polygon("fill", verts)
---
--- function drawStar(x, y, outerR, innerR, r, g, b)
---     -- your code here
--- end
+SCREEN_W = 800
+SCREEN_H = 600
 
--- TODO 3 (bonus): Write a drawShootingStar(x, y) function here too.
--- It should draw a small star with a line tail behind it.
--- Hint: use love.graphics.line then call drawStar!
+-- ============================================================
+-- TODO 1: Write the drawHouse function.
+-- Signature: function drawHouse(x, y, size, r, g, b)
 --
--- function drawShootingStar(x, y)
---     -- your code here
--- end
-
-function love.load()
+-- The function should draw four things using x, y, size, r, g, b:
+--   a) The wall     — a rectangle. Use r, g, b as the wall color.
+--   b) The roof     — a triangle (polygon). Make it a darker shade of the wall color.
+--   c) The door     — a small rectangle near the bottom center of the wall.
+--   d) The window   — a small light-blue rectangle on the upper-left of the wall.
+--
+-- Scale every measurement off `size` so the house grows/shrinks as a unit.
+function drawHouse(x, y, size, r, g, b)
+    -- your code here
 end
+-- ============================================================
 
-function love.update(dt)
+-- ============================================================
+-- TODO 2: Write the drawTree function.
+-- Signature: function drawTree(x, y, size)
+--
+-- The function should draw two things:
+--   a) The trunk  — a brown rectangle below the center point.
+--   b) The leaves — a green triangle (polygon) above the trunk.
+--
+-- Scale measurements off `size`.
+function drawTree(x, y, size)
+    -- your code here
 end
+-- ============================================================
+
+function love.load() end
+function love.update(dt) end
 
 function love.draw()
-    -- Night sky background
-    love.graphics.setColor(0.03, 0.03, 0.12)
-    love.graphics.rectangle("fill", 0, 0, 800, 600)
+    -- Sky
+    love.graphics.setColor(0.4, 0.7, 1)
+    love.graphics.rectangle("fill", 0, 0, SCREEN_W, SCREEN_H)
 
-    -- TODO 2: Call drawStar at least 8 times with different positions, sizes, and colors.
-    -- For example:
-    --   drawStar(400, 120, 50, 20, 1.0, 0.9, 0.2)   -- large golden star
-    --   drawStar(100,  80, 20,  8, 1.0, 1.0, 0.9)   -- small white star
-    -- Keep going! Try big stars, tiny stars, blue ones, red ones...
+    -- Ground
+    love.graphics.setColor(0.3, 0.65, 0.2)
+    love.graphics.rectangle("fill", 0, 420, SCREEN_W, SCREEN_H - 420)
 
-    -- Instructions text
-    love.graphics.setColor(0.6, 0.6, 0.8)
-    love.graphics.print("Implement drawStar() and fill the sky with stars!", 10, 575)
+    -- TODO 3: Call drawHouse at least three times with different positions and colors.
+    -- Suggested positions: (80, 300), (300, 320), (530, 290)
+    -- Suggested sizes:     120, 100, 130
+    -- Pick any r, g, b values you like for each house.
+
+    -- TODO 4: Call drawTree at least twice with different positions and sizes.
+    -- Suggested positions: (240, 310), (490, 305), (700, 300)
+    -- Suggested sizes:     90, 80, 100
 end

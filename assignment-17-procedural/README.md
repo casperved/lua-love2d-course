@@ -1,79 +1,84 @@
 # Assignment 17: Procedural Generation
 
-What if your game could build itself? Procedural generation means using *code and randomness* to create content — instead of placing every star, rock, or room tile by hand. Games like Minecraft, Spelunky, and No Man's Sky are almost entirely procedurally generated. Cool, right?
+## What you'll learn
 
-In this assignment you'll generate two things every time you press Space:
-
-1. A **starfield** — hundreds of stars scattered across the sky at random sizes and brightnesses.
-2. A **dungeon room** — a grid of wall and floor tiles where walls are randomly placed (with guaranteed borders so the room stays enclosed).
-
-Each press of Space gives you a completely different result. That's the magic of procedural generation!
+How to use `math.random()` to let your code build a different world every single time.
 
 ---
 
-## Random Numbers in Lua
+## How it works
 
-### math.random()
+Imagine you had to paint 120 stars on a canvas by hand. You'd have to decide exactly where each one goes. That takes forever — and every painting would look the same.
 
-Without arguments, `math.random()` returns a decimal number between **0.0 and 1.0**:
+Now imagine you rolled a pair of dice instead. Roll for X. Roll for Y. Roll for the size. Suddenly every painting is different, and you did almost no work. That's **procedural generation**.
+
+Games like Minecraft, Spelunky, and No Man's Sky use this trick to make worlds that are different every time you play. You write the *rules*, and the computer rolls the dice.
+
+### math.random() — your dice
+
+Without any numbers, it gives you a random decimal between 0 and 1:
 
 ```lua
-print(math.random())  -- e.g. 0.37291...
+math.random()   -- could be 0.0, 0.37, 0.99 — anything in between
 ```
 
-With two integer arguments, it returns a whole number in that range (inclusive):
+With two whole numbers, it picks a random integer in that range (both ends included):
 
 ```lua
-print(math.random(1, 6))   -- like rolling a six-sided die: 1, 2, 3, 4, 5, or 6
-print(math.random(0, 800))  -- random x position across an 800-pixel screen
+math.random(1, 6)     -- like a six-sided die: 1, 2, 3, 4, 5, or 6
+math.random(0, 800)   -- a random x position anywhere on screen
 ```
 
-### Scaling decimals to a range
+### Making a random number land in a custom range
 
-If you want a decimal in a custom range, multiply and add:
+Want brightness between 0.5 and 1.0 (never fully dark)? Stretch and shift:
 
 ```lua
--- Random brightness between 0.5 and 1.0:
 local brightness = math.random() * 0.5 + 0.5
---                 ^^ gives 0.0–0.5, then +0.5 shifts to 0.5–1.0
+--                 ^^^^^^^^^^^^^^^^  gives 0.0–0.5
+--                                  + 0.5 slides it up to 0.5–1.0
 ```
 
-### math.randomseed()
+### Seeding — why you need os.time()
 
-By default, `math.random()` produces the **same sequence** every run. Seeding with the current time makes it different each time:
+By default Lua's random numbers follow the **same secret list** every run. Your program would be identical every time you opened it. One line fixes that:
 
 ```lua
-math.randomseed(os.time())  -- call this once in love.load!
+math.randomseed(os.time())  -- use the current clock as the starting point
 ```
 
+Call it once in `love.load()` and from then on every run is genuinely random.
+
+### The dungeon grid
+
+We store the dungeon as a 2D table of `true`/`false` values:
+
+- `true` means the tile is a **wall**
+- `false` means it's a **floor**
+
+We loop over every row and column. Border tiles are *always* walls (so the room stays enclosed). Interior tiles have a 30 % chance of being a wall — that's all it takes to get a dungeon that looks hand-crafted.
+
 ---
 
-## What Does "Procedural" Really Mean?
+## Your mission
 
-"Procedural" just means *following a procedure* (a set of rules). A procedural generator is a function that follows rules and introduces randomness to create varied results:
+Press SPACE and watch a brand-new starfield and dungeon appear. Right now SPACE does nothing and no stars or tiles are drawn. Your job is to fill in the five TODOs:
 
-- **Rule**: every border tile is always a wall (so the room is enclosed).
-- **Randomness**: interior tiles have a 30% chance of being a wall.
+1. **TODO 1** — fill the `stars` table with 120 random stars (position, size, brightness).
+2. **TODO 2** — fill the `tiles` grid: borders are always walls, interior tiles are walls 30% of the time.
+3. **TODO 3** — draw every star using its stored brightness as the colour.
+4. **TODO 4** — draw every tile: walls get a dark purple colour, floors get a very dark colour.
+5. **TODO 5** — make SPACE call `generate()` so the world rebuilds.
 
-Change the 30% to 60% and you get a dense maze. Drop it to 5% and you get an open room. The *rules* stay the same; only the *numbers* change.
-
----
-
-## Your Mission
-
-1. Fill in **TODO 1**: generate 120 stars with random positions, sizes, and brightnesses.
-2. Fill in **TODO 2**: build the tile grid — borders are always walls, interiors have a 30% wall chance.
-3. Fill in **TODO 3**: draw each star using its stored brightness as the colour.
-4. Fill in **TODO 4**: draw the tile grid (wall tiles are a dark purple, floors are very dark).
-5. Fill in **TODO 5**: pressing Space should call `generate()` to rebuild everything.
+After TODO 1 and TODO 3 you'll see stars. After TODO 2 and TODO 4 you'll see the dungeon overlay. TODO 5 ties it all together.
 
 ---
 
 ## Hints
 
-<details><summary>Hint 1 — Generating stars (TODO 1)</summary>
+<details><summary>Hint 1 — Creating the stars (TODO 1 & 3)</summary>
 
-The pattern is:
+Build the table inside a loop. Each star is a small table with four fields:
 
 ```lua
 stars = {}
@@ -87,13 +92,18 @@ for i = 1, 120 do
 end
 ```
 
-`math.random() * 0.5 + 0.5` gives a decimal between 0.5 and 1.0 — so stars are never fully dark.
+Then in `love.draw`, loop over `stars` and use `s.brightness` for all three colour channels — that gives a white-to-grey star:
+
+```lua
+love.graphics.setColor(s.brightness, s.brightness, s.brightness * 0.9 + 0.1)
+love.graphics.circle("fill", s.x, s.y, s.radius)
+```
 
 </details>
 
-<details><summary>Hint 2 — Building the grid (TODO 2)</summary>
+<details><summary>Hint 2 — Building the tile grid (TODO 2)</summary>
 
-You need a 2D table: `tiles[row][col]` is `true` for wall, `false` for floor.
+You need a table-of-tables. Create each row as its own table, then fill each column:
 
 ```lua
 tiles = {}
@@ -106,21 +116,21 @@ for row = 1, ROWS do
 end
 ```
 
-`math.random() < 0.3` is true about 30% of the time — that's your wall chance.
+`math.random() < 0.3` is `true` about 30 % of the time — that's your random wall chance. `isBorder or ...` means border tiles are always walls regardless.
 
 </details>
 
-<details><summary>Hint 3 — Drawing the grid (TODO 4)</summary>
+<details><summary>Hint 3 — Drawing the tile grid (TODO 4)</summary>
 
-Loop through every row and column. Multiply the index by `TILE_SIZE` to get pixel coordinates, and subtract 1 pixel for a thin gap between tiles:
+Loop through every row and column. Multiply the index by `TILE_SIZE` to turn the grid position into a pixel position. Subtract 1 pixel from the size to leave a thin gap between tiles:
 
 ```lua
 for row = 1, ROWS do
     for col = 1, COLS do
         if tiles[row] and tiles[row][col] then
-            love.graphics.setColor(0.4, 0.3, 0.5)  -- wall colour
+            love.graphics.setColor(0.38, 0.28, 0.48)   -- wall: dark purple
         else
-            love.graphics.setColor(0.1, 0.08, 0.15) -- floor colour
+            love.graphics.setColor(0.09, 0.07, 0.14)   -- floor: very dark
         end
         love.graphics.rectangle("fill",
             (col - 1) * TILE_SIZE,
@@ -137,6 +147,6 @@ end
 
 ## Stretch Goals
 
-1. **Cave generation** — after building the random grid, run a "smoothing pass": count a tile's wall neighbours; if 5 or more are walls, make it a wall, otherwise make it a floor. This creates cave-like shapes (look up "cellular automata cave generation"!).
-2. **Colour themes** — pick a random colour palette each time `generate()` runs. Multiply your tile colours by `math.random(0.8, 1.2)` for subtle variation.
-3. **Animated stars** — give each star a `twinkle` value and wiggle its brightness in `love.update` using `math.sin(love.timer.getTime() * speed + offset)`.
+1. **Cave smoother** — after building the random grid, loop over every interior tile and count how many of its neighbours are walls. If 5 or more are walls, make it a wall; otherwise make it a floor. Run this pass two or three times and you'll get organic cave shapes (this technique is called "cellular automata").
+2. **Random colour themes** — at the start of `generate()` pick random wall and floor colours and store them in variables. Use those variables in your draw loop so each new dungeon has its own look — icy blue, volcanic red, mossy green.
+3. **Treasure hunt** — after generating the dungeon, find a random floor tile and mark it as the treasure. Draw a small yellow rectangle there. Move a white dot around with WASD and print "You found it!" when the dot reaches the treasure. Now your procedural room has a goal!

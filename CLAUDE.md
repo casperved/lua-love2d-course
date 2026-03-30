@@ -70,9 +70,9 @@ Each README should contain these sections in order:
 - Includes a few **visual extras** beyond the bare minimum (e.g. a glow effect, particle burst, colour variation) — these serve as inspiration for stretch goals
 - Well commented — the solution should still be readable and educational
 
-## Concepts taught in assignments 01–20
+## Concepts taught in assignments 01–31
 
-After completing all 20 assignments the learner knows:
+After completing all 31 assignments the learner knows:
 
 | Concept | Where taught |
 |---------|-------------|
@@ -101,23 +101,28 @@ After completing all 20 assignments the learner knows:
 | math.random, math.randomseed, procedural gen | 17 |
 | Putting it all together (mini projects) | 18, 19 |
 | Open-ended game design | 20 |
+| love.filesystem.write / read, tostring / tonumber | 21 |
+| require, module pattern (`local M = {} … return M`) | 22 |
+| Metatables, __index, : method syntax, constructors | 23 |
+| love.graphics.newQuad, Canvas-as-spritesheet, frame animation | 24 |
+| Gravity, jumping, AABB platform landing, onGround flag | 25 |
+| love.graphics.push/pop/translate, world vs screen coords, camera clamping | 26 |
+| love.graphics.newParticleSystem, emitter settings, one-shot emit | 27 |
+| love.graphics.newShader, GLSL fragment shaders, uniforms | 28 |
+| Vertical scrolling camera (one-way), procedural level generation, particle burst power-ups, persistent score | 29 |
+| Multiple enemy types (chaser/bouncer/patroller), data-driven behavior branching, invincibility timer | 30 |
+| Waypoint pathfinding, direction normalization, advancing through a path array | 31 |
+| Tower defense: tower placement, range detection, priority targeting, homing bullets, enemy health | 32 |
 
-## Ideas for post-assignment-20 topics
+## Ideas for post-assignment-32 topics
 
-When the learner has finished all 20 assignments and is ready for more, these are natural next steps (roughly in order of complexity):
+When the learner has finished all 31 assignments and is ready for more, these are natural next steps:
 
-1. **Spritesheet animation** — `love.graphics.newQuad`, frame-based animation loop
-2. **Multiple Lua files** — `require`, splitting code into `player.lua`, `enemy.lua`, etc.
-3. **Saving data** — `love.filesystem.write` / `read` to persist high scores across sessions
-4. **Object-oriented Lua** — metatables, `:` method syntax, building a `Player` class
-5. **Tiled maps** — load `.lua` maps from the Tiled map editor using the Simple-Tiled-Implementation library
-6. **Camera / scrolling worlds** — `love.graphics.translate` so the world is bigger than the screen
-7. **LÖVE2D physics** — `love.physics` (Box2D wrapper): bodies, shapes, joints, collision callbacks
-8. **Particle systems** — `love.graphics.newParticleSystem` for explosions, smoke, rain
-9. **GLSL shaders** — `love.graphics.newShader` for glow, pixelation, water ripple effects
-10. **Platformer physics** — gravity (`vy = vy + gravity * dt`), jumping, platform collision
-11. **Top-down RPG** — grid-based movement, interaction with objects, simple dialogue system
-12. **Networking** — `lua-socket` for simple two-player games over LAN
+1. **Tiled maps** — load `.lua` maps from the Tiled map editor using the Simple-Tiled-Implementation library
+2. **LÖVE2D physics** — `love.physics` (Box2D wrapper): bodies, shapes, joints, collision callbacks
+3. **Top-down RPG** — grid-based movement, interaction with objects, simple dialogue system
+4. **Networking** — `lua-socket` for simple two-player games over LAN
+5. **Mobile / gamepad input** — `love.joystick`, touch input, on-screen buttons
 
 ## How to generate a new assignment
 
@@ -130,4 +135,4 @@ Then follow the file structure and rules above. The assignment number should con
 
 ### Example prompt to continue this course
 
-> "Generate assignment 21 for this course. Topic: spritesheet animation. The learner will animate a walking character using a spritesheet image and `love.graphics.newQuad`. Follow the format in CLAUDE.md."
+> "Generate assignment 32 for this course. Topic: Tiled maps. The learner will load a `.lua` map exported from the Tiled editor and render it tile by tile. Follow the format in CLAUDE.md."

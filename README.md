@@ -120,6 +120,18 @@ Here's everything you'll learn. Each assignment builds on the last one, so go in
 | 18 | Mini Project: Catch the Drops | A complete game to finish |
 | 19 | Mini Project: Dodge! | Another complete game to finish |
 | 20 | Final Project: Your Game | Build your own game from scratch |
+| 21 | Saving & Loading Data | Persist high scores with love.filesystem |
+| 22 | Multiple Files | Split code into modules with require |
+| 23 | Object-Oriented Lua | Classes, metatables, and method syntax |
+| 24 | Spritesheet Animation | Animate frames with newQuad |
+| 25 | Platformer Physics | Gravity, jumping, and platform landing |
+| 26 | Camera & Scrolling World | Translate the view to follow the player |
+| 27 | Particle Systems | Fire, smoke, and burst effects |
+| 28 | GLSL Shaders | Grayscale, scanlines, and color effects |
+| 29 | Vertical Climber | One-way camera, procedural levels, power-up particles, saved score |
+| 30 | Enemy Variety | Three enemy types with different movement behaviors |
+| 31 | Waypoint Pathfinding | Enemies follow a winding path of waypoints |
+| 32 | Tower Defense | Place towers that auto-target and shoot enemies |
 
 ---
 

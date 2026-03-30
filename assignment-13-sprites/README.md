@@ -1,12 +1,20 @@
-# Assignment 13: Sprites & Images 🚀
+# Assignment 13: Sprites & Images
 
-You've been drawing rectangles and circles. Now let's level up and draw *real* artwork! In most games you'd load a `.png` file as a sprite. In this assignment we'll learn all the concepts — and since we can't include image files in the course, we'll create our sprite by drawing shapes onto a **Canvas**, which works exactly like a real image once it's made.
+In this assignment you'll learn how to draw a picture once, save it, and then stamp it anywhere on screen — rotated, scaled, and centred perfectly.
 
 ---
 
-## Loading a Real Image (the normal way)
+## What you'll learn
 
-When you have an image file, you do this:
+How to use `love.graphics.draw()` to display an image (or a canvas) at any position, with any rotation, using a centre pivot point.
+
+---
+
+## How it works
+
+### Images in real games
+
+In most games you'd have a file called `spaceship.png` sitting in your project folder. Loading and drawing it looks like this:
 
 ```lua
 function love.load()
@@ -18,11 +26,25 @@ function love.draw()
 end
 ```
 
-That's it! The image file must be in the same folder as `main.lua`.
+Short and sweet! But we don't have a PNG file here, so we'll make our own image using a **Canvas**.
 
----
+### What is a Canvas?
 
-## The `love.graphics.draw` Arguments
+Think of a Canvas like a blank piece of paper you can draw on.
+
+You grab the paper, draw your spaceship on it with shapes, then put the paper down. Now you have a finished drawing you can pick up and stamp anywhere on screen — just like a rubber stamp.
+
+```lua
+myCanvas = love.graphics.newCanvas(60, 80)   -- make a blank 60x80 sheet
+
+love.graphics.setCanvas(myCanvas)   -- "pick up the pen" — draw onto the canvas
+    love.graphics.circle("fill", 30, 20, 10)  -- draw a circle on it
+love.graphics.setCanvas()           -- "put down the pen" — back to drawing on screen
+```
+
+After that, `myCanvas` works exactly like a loaded image file.
+
+### The draw command — all its arguments
 
 ```lua
 love.graphics.draw(image, x, y, rotation, scaleX, scaleY, originX, originY)
@@ -30,115 +52,115 @@ love.graphics.draw(image, x, y, rotation, scaleX, scaleY, originX, originY)
 
 | Argument | What it does |
 |---|---|
-| `image` | The image (or canvas) to draw |
-| `x, y` | Position on screen |
-| `rotation` | Rotation in **radians** (0 = no rotation, `math.pi` = 180°) |
-| `scaleX, scaleY` | Size multiplier (1 = normal, 2 = double, 0.5 = half) |
-| `originX, originY` | The "pivot point" — the point on the image that sits at (x, y) |
+| `image` | The image or canvas to stamp |
+| `x, y` | Where on screen to stamp it |
+| `rotation` | How much to rotate it, in **radians** (0 = no rotation) |
+| `scaleX, scaleY` | How big to make it (1 = normal, 2 = double size) |
+| `originX, originY` | The "pin point" — which part of the image sits at (x, y) |
 
----
+### The pivot point — why it matters
 
-## Origin Offset — Rotating Around the Centre
+Imagine you're pinning a picture to a noticeboard. If you pin it by its **top-left corner**, spinning it rotates around that corner — looks weird for a spaceship!
 
-By default, `originX` and `originY` are 0, so the image is drawn with its **top-left corner** at (x, y). That's fine for placing, but if you rotate it, it spins around the top-left corner — usually not what you want!
+If you pin it through its **centre**, it spins in place — much better.
 
-To rotate around the **centre** of the image:
-
-```lua
-local ox = imageWidth  / 2
-local oy = imageHeight / 2
-love.graphics.draw(image, x, y, rotation, 1, 1, ox, oy)
-```
-
-Now (x, y) is the centre of the image, and rotation spins it around that point.
-
----
-
-## What is a Canvas?
-
-A `Canvas` is a texture you can draw *onto*:
+To pin through the centre, set `originX = imageWidth / 2` and `originY = imageHeight / 2`:
 
 ```lua
-myCanvas = love.graphics.newCanvas(width, height)
-
-love.graphics.setCanvas(myCanvas)   -- redirect drawing to the canvas
-    -- ... draw shapes here ...
-love.graphics.setCanvas()           -- go back to drawing on the screen
+love.graphics.draw(myCanvas, x, y, rotation, 1, 1, canvasWidth/2, canvasHeight/2)
 ```
 
-After that, `myCanvas` behaves exactly like an image loaded from a file. You can pass it to `love.graphics.draw()` with rotation, scale, and origin!
+Now `(x, y)` is the centre of the image, and it rotates around that point.
+
+### Radians — a quick cheat sheet
+
+LÖVE measures angles in **radians**, not degrees. Here's all you need:
+
+```
+Pointing up    → -math.pi / 2
+Pointing down  →  math.pi / 2
+Pointing left  →  math.pi
+Pointing right →  0
+```
 
 ---
 
-## Your Mission
+## Your mission
 
-- A spaceship (made from shapes drawn onto a Canvas) flies around the screen.
-- Move it with **WASD**.
-- The ship **rotates** to face the direction it's moving.
-- As a bonus, add a thruster flame when pressing W (moving up)!
+You'll fly a canvas-drawn spaceship around a starfield with WASD. The ship rotates to face the direction it's moving, and a thruster flame appears when pressing W.
 
----
+**TODOs to fill in:**
 
-## TODOs in the Starter File
-
-1. **TODO 1** — Call `love.graphics.draw()` with the canvas, ship position, angle, scale 1/1, and centred origin.
-2. **TODO 2** — Draw an orange flame triangle below the ship when W is held down.
+1. **TODO 1** — Call `love.graphics.draw()` to stamp the canvas on screen at the ship's position, with rotation and a centred pivot point. Remove the placeholder rectangle once this works.
+2. **TODO 2** — Set `ship.moving = true` inside the movement blocks so the thruster knows when to fire.
+3. **TODO 3** — Draw the thruster flame (a triangle behind the ship) when W is held and the ship is moving.
 
 ---
 
 ## Hints
 
-<details><summary>Hint 1 — Drawing the canvas as a sprite</summary>
+<details><summary>Hint 1 — How to draw the canvas as a sprite</summary>
+
+Replace the placeholder rectangle with this:
 
 ```lua
-love.graphics.setColor(1, 1, 1)   -- white tint = draw at full colour
+love.graphics.setColor(1, 1, 1)   -- white = draw at full colour, no tint
 love.graphics.draw(
-    shipCanvas,    -- the canvas to draw
-    ship.x,        -- screen X position
-    ship.y,        -- screen Y position
-    ship.angle,    -- rotation in radians
-    1, 1,          -- scaleX, scaleY
-    shipW / 2,     -- originX (centre of the canvas)
-    shipH / 2      -- originY (centre of the canvas)
+    shipCanvas,          -- the canvas to stamp
+    ship.x, ship.y,      -- centre position on screen
+    ship.angle + math.pi/2,  -- rotation (the canvas nose points up; offset by 90° to align)
+    1, 1,                -- scaleX, scaleY (normal size)
+    shipW / 2,           -- originX: halfway across the canvas
+    shipH / 2            -- originY: halfway down the canvas
 )
 ```
 
-Delete the placeholder rectangle once you've added this!
+The `+ math.pi/2` offset is needed because the canvas was drawn with the nose pointing straight up (angle 0 in canvas space), but LÖVE's angle 0 means "pointing right". Adding 90° lines them up.
 </details>
 
-<details><summary>Hint 2 — Thruster flame</summary>
+<details><summary>Hint 2 — Tracking whether the ship is moving</summary>
 
-A thruster flame is a small triangle drawn below the ship's centre. Because the ship rotates, you need to draw this *before* you draw the ship — or just check which key is held:
+At the top of `love.update`, reset the flag:
 
 ```lua
-if love.keyboard.isDown("w") then
-    love.graphics.setColor(1, 0.5, 0.1, 0.9)
-    -- Position the flame below the ship centre
-    local fx = ship.x
-    local fy = ship.y + shipH * 0.5 + 5
-    love.graphics.polygon("fill", fx - 10, fy, fx + 10, fy, fx, fy + 20)
-end
+ship.moving = false
 ```
+
+Then inside each `if love.keyboard.isDown(...)` block, add:
+
+```lua
+ship.moving = true
+```
+
+That way `ship.moving` is only true during the frame a key is held.
 </details>
 
-<details><summary>Hint 3 — Angles for each direction</summary>
+<details><summary>Hint 3 — Drawing the thruster flame</summary>
 
-LÖVE uses radians. Here's a cheat sheet:
+The flame is a triangle drawn just behind the ship's centre. Because the ship only shows a flame when moving upward (W key), you can position it at a fixed offset below the ship centre:
 
+```lua
+if ship.moving and love.keyboard.isDown("w") then
+    local fx = ship.x
+    local fy = ship.y + shipH / 2 + 8   -- just below the ship centre
+
+    -- Outer flame (orange)
+    love.graphics.setColor(1, 0.45, 0.05, 0.85)
+    love.graphics.polygon("fill", fx - 9, fy,  fx + 9, fy,  fx, fy + 22)
+
+    -- Inner flame (yellow)
+    love.graphics.setColor(1, 0.9, 0.2, 0.9)
+    love.graphics.polygon("fill", fx - 5, fy,  fx + 5, fy,  fx, fy + 13)
+end
 ```
-Up    → -math.pi / 2   (or -1.5708)
-Down  →  math.pi / 2
-Left  →  math.pi       (or 3.1416)
-Right →  0
-```
 
-The ship canvas is drawn pointing **up** by default (the nose is at the top), so the angle values above line up with the movement directions perfectly!
+Draw the flame **before** you draw the ship, so it appears behind it.
 </details>
 
 ---
 
 ## Stretch Goals
 
-1. **Diagonal movement** — Allow pressing two keys at once (e.g. W+D) to move diagonally. Calculate the angle with `math.atan2`.
-2. **Wrap around the screen** — When the ship flies off one edge, it reappears on the opposite side.
-3. **Exhaust particles** — Spawn small fading circles behind the ship whenever it's moving, to create a particle trail.
+1. **Screen wrap** — When the ship flies off one edge, make it reappear on the opposite side. (The solution already does this — try to work out how before peeking!)
+2. **Diagonal movement** — Allow pressing two keys at once (e.g. W + D) to move diagonally. Calculate the angle with `math.atan2`.
+3. **Particle trail** — Spawn small fading dots behind the ship whenever it moves, to create an exhaust effect.

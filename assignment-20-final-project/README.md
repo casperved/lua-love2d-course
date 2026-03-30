@@ -1,125 +1,130 @@
-# Assignment 20: Final Project — Your Game!
+# Assignment 20: Final Project — Star Shooter
 
-# You made it. This is huge.
-
-Seriously — you started with a blank screen and `print("Hello")`, and now you know how to move players, detect collisions, spawn enemies, generate worlds procedurally, play sounds, track scores, and build complete games with title screens and game-over states. That's a real skill set. Be proud of that.
-
-Now it's time to use everything you've learned to build **your own game**. There are no TODOs this time. No template to fill in. This is your project, your idea, your creative vision.
+You made it. Seriously. You started with a blank screen and `print("Hello")`, and now you know how to move players, shoot bullets, detect collisions, spawn enemies, track scores, and build games with title screens and game-over states. That is a real skill set. Be proud.
 
 ---
 
-## Your Mission
+## What you'll learn
 
-Build a game. Any game. It just needs to:
-
-- Have a player the user can control
-- Have a goal (something to achieve or survive)
-- Have a way to win or lose (or a score to beat)
-- Run without crashing
-
-That's it. The rest is up to you.
+How to put **everything together** into one complete, playable game.
 
 ---
 
-## How to Start: A Proven Plan
+## How it works
 
-Don't try to build everything at once. Follow these steps, one at a time:
+Think of this assignment like building a LEGO set. You already know what every individual piece does. Now you snap them all together into the final thing.
 
-### Step 1 — Choose your game type
+The game is a **mini space shooter**:
 
-Pick one idea from the list below (or invent your own!). The simpler, the better for your first solo project.
+- You are a spaceship at the bottom of the screen.
+- Alien saucers fall from the top.
+- You shoot them with bullets before they slip past you.
+- If an enemy gets past your ship, you lose a life. Lose all three and it's game over.
+- Enemies get faster the longer you survive.
 
-### Step 2 — Plan it on paper (5 minutes)
+Here is how the pieces connect:
 
-Grab a piece of paper and answer:
-- What does the player do every frame? (move, shoot, jump?)
-- What is the win condition? Or is it a survival score game?
-- What objects does the game have? (player, enemies, bullets, platforms?)
-- How does the player lose?
+| Piece | What it does |
+|---|---|
+| `gameState` | A string — `"title"`, `"playing"`, or `"gameover"` — that decides what gets drawn and updated each frame. |
+| `player` table | Holds the ship's position, speed, lives, score, and two timers: one for shoot rate, one for brief invincibility after being hit. |
+| `bullets` table | Every time you press Space, two small rectangles are added here. Each frame they move upward. When they leave the screen, they're removed. |
+| `enemies` table | A timer fires every second or so and adds a new saucer at the top. Each saucer moves downward. They get faster as `gameTimer` grows. |
+| `explosions` table | When something is destroyed, a burst of tiny dots is added here. They fly outward and fade over about half a second. |
+| `stars` table | 80 small dots that scroll downward slowly, giving the illusion of flying through space. |
+| `checkCollision` | The same rectangle-overlap function from Assignment 11. It checks bullet-vs-enemy and enemy-vs-player. |
+| `resetGame` | One function that clears all the tables and resets the player back to starting values. Called when a new run begins. |
 
-### Step 3 — Start with just the player
+The flow every frame looks like this:
 
-Open `starter/main.lua` and get a character moving on screen. Don't add anything else until that feels right. Run the game every few minutes — small steps!
+```
+love.update(dt)
+  → scroll stars
+  → move player left/right
+  → move bullets upward, remove off-screen ones
+  → spawn enemies on a timer
+  → move enemies downward
+      → if an enemy reaches the bottom: lose a life
+      → if a bullet hits an enemy: remove both, spawn explosion, add score
+      → if an enemy hits the player: lose a life, brief invincibility
+  → tick explosion particles, remove dead ones
+  → add one point every second (survival bonus)
 
-### Step 4 — Add one mechanic at a time
-
-Add enemies. Run it. Add collision. Run it. Add scoring. Run it. Never add two big things at the same time — if something breaks, you won't know which change caused it.
-
-### Step 5 — Playtest constantly
-
-Every time you add something, play the game and ask: *is this fun? is this fair? does it feel good?*
-
-### Step 6 — Add polish last
-
-Title screen, game-over screen, colours, a high score, visual effects, sounds. Do all of this *after* the core game works.
-
----
-
-## Game Type Ideas
-
-### Platformer
-The player jumps between platforms, collecting items or reaching a goal.
-
-**Key hints:**
-- Add a `vy` (vertical velocity) field to your player.
-- Each frame: `player.vy = player.vy + gravity * dt` (gravity ≈ 600).
-- Move the player: `player.y = player.y + player.vy * dt`.
-- When the player lands on a platform: set `vy = 0` and clamp the y position.
-- Jump: if the player is on the ground and Space is pressed, set `player.vy = -400`.
-
-### Space Shooter
-The player is at the bottom, firing bullets upward at descending enemies.
-
-**Key hints:**
-- `bullets` table, spawn one when Space is pressed.
-- Each bullet: `b.y = b.y - bulletSpeed * dt`. Remove when `b.y < 0`.
-- Enemies: spawn at the top, move downward. Remove when off-screen.
-- Check collision between every bullet and every enemy (nested loops).
-
-### Box Puzzle (Sokoban-style)
-The player pushes boxes onto marked target squares on a grid.
-
-**Key hints:**
-- Use a 2D grid: `grid[row][col]` = "wall", "floor", "box", "target".
-- Move one tile per key press (not continuous — check once in `keypressed`).
-- Win when every target cell has a box on it.
-
-### Top-Down Racer
-A car (seen from above) drives around a track, avoiding obstacles.
-
-**Key hints:**
-- The car has a `rotation` angle and moves in the direction it's facing.
-- Turn left/right: `car.rotation = car.rotation - turnSpeed * dt`.
-- Move forward: `car.x = car.x + math.cos(car.rotation) * speed * dt`.
-- `math.sin` / `math.cos` give the x and y components of a direction.
+love.draw()
+  → dark background
+  → scrolling stars
+  → (title screen OR game screen OR game-over screen)
+```
 
 ---
 
-## Tips for When Things Go Wrong
+## Your mission
 
-- **Read the error message carefully** — LÖVE2D tells you the line number and a description. Go to that line first.
-- **Use `print()` to check values** — if something isn't working, add `print(player.x, player.y)` and watch the output in the terminal.
-- **Comment things out** — if you're not sure which part is broken, comment out half your code and see if the problem disappears.
-- **Save a copy before making big changes** — just duplicate your `main.lua` as `main_backup.lua` before trying something risky.
-- **Take breaks** — seriously. When you're stuck, step away for 10 minutes. Fresh eyes spot bugs immediately.
+The starter file is the complete game with **five key parts removed**. Fill them back in:
 
----
+**TODO 1 — Scroll the stars.**
+In `love.update`, each star should move downward each frame and wrap back to the top when it falls off the bottom.
 
-## Stretch: Share Your Game!
+**TODO 2 — Move the player left and right.**
+Check if the left/right arrow keys (or A/D) are held down and move `player.x` accordingly. Clamp it so the ship can't leave the screen.
 
-Once you have something working, find a friend or family member and watch them play it — without helping them. Notice:
-- Where do they get confused?
-- What do they try to do that doesn't work?
-- What do they enjoy?
+**TODO 3 — Shoot bullets.**
+When Space is held and `player.shootCooldown` is zero, add two bullet tables to the `bullets` list — one near the left edge of the ship and one near the right. Reset the cooldown to `0.18` seconds.
 
-Then fix the confusing parts and lean into what they liked. This is exactly how real game developers improve their games. It's called **playtesting**, and it's one of the most valuable skills you can develop.
+**TODO 4 — Move bullets upward and remove them when off-screen.**
+Loop through `bullets` backwards. Subtract `BULLET_SPEED * dt` from each bullet's `y`. If the bottom edge of the bullet is above the top of the screen (`b.y + b.h < 0`), remove it.
 
----
-
-## The Solution File
-
-Check out `solution/main.lua` for a complete working mini-shooter built using the same template. It's there as **inspiration and reference**, not to copy. See how all the pieces — state machine, bullets table, enemy spawning, collision, HUD — fit together in a real game. Then go build yours.
+**TODO 5 — Fill in `checkCollision`.**
+The placeholder returns `false` for every pair. Replace it with the real AABB overlap formula from Assignment 11.
 
 ---
 
-You've got this. Have fun!
+## Hints
+
+<details><summary>Hint 1 — Scrolling stars</summary>
+
+Each star has a `speed` field. Every frame, add `s.speed * dt` to `s.y`. When `s.y` is bigger than `SCREEN_H + 4`, reset it to `-4` and pick a new random `s.x`.
+
+```lua
+s.y = s.y + s.speed * dt
+if s.y > SCREEN_H + 4 then
+    s.y = -4
+    s.x = math.random(0, SCREEN_W)
+end
+```
+</details>
+
+<details><summary>Hint 2 — Shooting bullets</summary>
+
+Check the cooldown before adding bullets. Spawn two at once — one on the left side of the ship, one on the right — for a spread effect. Don't forget to reset the cooldown.
+
+```lua
+if love.keyboard.isDown("space") and player.shootCooldown <= 0 then
+    table.insert(bullets, { x = player.x + 8,             y = player.y, w = 4, h = 14 })
+    table.insert(bullets, { x = player.x + player.w - 12, y = player.y, w = 4, h = 14 })
+    player.shootCooldown = 0.18
+end
+```
+</details>
+
+<details><summary>Hint 3 — checkCollision formula</summary>
+
+Two rectangles overlap when neither one is fully to the left, right, above, or below the other. All four conditions must be true at the same time:
+
+```lua
+function checkCollision(a, b)
+    return a.x < b.x + b.w and
+           a.x + a.w > b.x and
+           a.y < b.y + b.h and
+           a.y + a.h > b.y
+end
+```
+</details>
+
+---
+
+## Stretch Goals
+
+1. **Add a high score that survives between games.** The solution already tracks `player.highScore` in memory. Go further: save it to a file using `love.filesystem.write` (from Assignment 21) so it persists even after you close the game.
+2. **Give enemies different speeds and colors.** The solution uses a single `hue` field for color variation. Try adding a `type` field — some enemies move in a zigzag, some are faster but worth more points.
+3. **Add a power-up.** Occasionally spawn a glowing item that falls like an enemy. If the player touches it, they gain an extra life or a rapid-fire burst for five seconds.
